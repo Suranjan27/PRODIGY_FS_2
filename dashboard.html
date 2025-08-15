@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Preloader styles */
+    #loader {
+      transition: opacity 0.5s ease-out;
+    }
+    #loading-bar {
+        transition: width 2s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Preloader -->
+  <div id="loader" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
+    <img src="https://paceresources.in/wp-content/uploads/2024/02/hrstratege.gif" alt="Loading GIF" class="w-48 h-auto mb-4 rounded-lg">
+    <div class="w-64 bg-gray-200 rounded-full h-2.5 mb-4">
+        <div id="loading-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+    </div>
+    <p class="text-gray-600">Loading Dashboard...</p>
+  </div>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <div class="sidebar bg-white w-64 p-6 flex flex-col space-y-6 shadow-lg">
+      <div class="profile text-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/4288/4288270.png" alt="Admin Photo" class="w-20 h-20 rounded-full mx-auto border-4 border-gray-200">
+        <h3 id="adminName" class="mt-4 text-xl font-semibold text-gray-900">Admin Name</h3>
+        <p class="text-gray-500">Administrator</p>
+      </div>
+      <div id="clock" class="text-center text-lg font-mono bg-gray-100 p-2 rounded-lg text-gray-700"></div>
+      <div class="flex-grow"></div>
+      <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center gap-2">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content flex-1 p-8 md:p-10">
+      <h1 class="text-4xl font-bold mb-8 text-gray-900" style="color:#0073ff">Employee Management</h1>
+
+      <!-- Add Employee Form -->
+      <div class="bg-white p-6 rounded-2xl shadow-lg mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Add New Employee</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <input type="text" id="name" placeholder="Name" class="bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:col-span-1">
+          <input type="email" id="email" placeholder="Email" class="bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:col-span-1">
+          <input type="text" id="position" placeholder="Position" class="bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:col-span-1">
+          <input type="number" id="salary" placeholder="Salary" class="bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:col-span-1">
+          <button onclick="addEmployee()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center gap-2 lg:col-span-1">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Employee List -->
+      <div class="bg-white p-6 rounded-2xl shadow-lg overflow-x-auto">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Employee List</h2>
+        <table class="w-full text-left">
+          <thead class="border-b border-gray-200">
+            <tr>
+              <th class="p-3 text-gray-600">Name</th>
+              <th class="p-3 text-gray-600">Email</th>
+              <th class="p-3 text-gray-600">Position</th>
+              <th class="p-3 text-gray-600">Salary</th>
+              <th class="p-3 text-center text-gray-600">Action</th>
+            </tr>
+          </thead>
+          <tbody id="employeeTable">
+            <!-- Employee rows will be inserted here by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Preloader ---
+    window.onload = function() {
+      const loader = document.getElementById('loader');
+      const loadingBar = document.getElementById('loading-bar');
+      const minimumLoadTime = 2000; // 2 seconds
+
+      if (loader && loadingBar) {
+        // Force the browser to paint the initial state before starting the transition
+        requestAnimationFrame(() => {
+            // Animate the loading bar to 100%
+            loadingBar.style.width = '100%';
+        });
+
+        // Set timeout to hide the loader after the animation is complete
+        setTimeout(() => {
+          // Start fade out
+          loader.style.opacity = '0';
+          // Remove from DOM after transition completes
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 500); // This should match the CSS transition duration
+        }, minimumLoadTime);
+      }
+    };
+
+    // --- Authentication and User Info ---
+    // Redirect if not logged in
+    if (sessionStorage.getItem("isLoggedIn") !== "true") {
+      // window.location.href = "index.html"; // Uncomment to enforce login
+    }
+
+    // Load admin data from localStorage
+    const admin = JSON.parse(localStorage.getItem('admin')) || { name: 'Admin' };
+    document.getElementById('adminName').innerText = admin.name;
+
+   function logout() {
+    sessionStorage.removeItem("isLoggedIn");
+    window.location.href = "index.html"; // Redirect to login page
+  }
+
+
+    // --- Clock ---
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString();
+      const date = now.toLocaleDateString();
+      document.getElementById('clock').innerHTML = `${date}<br>${time}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial call
+
+    // --- Employee Management ---
+    let employees = JSON.parse(localStorage.getItem('employees')) || [];
+    let editingIndex = null;
+
+    function renderTable() {
+      const tableBody = document.getElementById('employeeTable');
+      tableBody.innerHTML = '';
+      employees.forEach((emp, index) => {
+        const row = `
+          <tr class="border-b border-gray-100 hover:bg-gray-50">
+            <td class="p-3">${emp.name}</td>
+            <td class="p-3">${emp.email}</td>
+            <td class="p-3">${emp.position}</td>
+            <td class="p-3">₹${Number(emp.salary).toLocaleString()}</td>
+            <td class="p-3 text-center">
+              <button onclick="editEmployee(${index})" class="text-blue-500 hover:text-blue-700 mr-4"><i class="fas fa-edit"></i></button>
+              <button onclick="deleteEmployee(${index})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    function saveEmployees() {
+      localStorage.setItem('employees', JSON.stringify(employees));
+    }
+
+    function clearInputs() {
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('position').value = '';
+        document.getElementById('salary').value = '';
+    }
+
+    function addEmployee() {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const position = document.getElementById('position').value.trim();
+      const salary = document.getElementById('salary').value.trim();
+
+      if (!name || !email || !position || !salary) {
+        // A non-blocking notification would be better in a real app
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const newEmployee = { name, email, position, salary };
+
+      if (editingIndex !== null) {
+        employees[editingIndex] = newEmployee;
+        editingIndex = null;
+      } else {
+        employees.push(newEmployee);
+      }
+      
+      saveEmployees();
+      renderTable();
+      clearInputs();
+    }
+
+    function editEmployee(index) {
+        const emp = employees[index];
+        document.getElementById('name').value = emp.name;
+        document.getElementById('email').value = emp.email;
+        document.getElementById('position').value = emp.position;
+        document.getElementById('salary').value = emp.salary;
+        editingIndex = index;
+    }
+
+    function deleteEmployee(index) {
+      // Using a custom modal would be better than confirm()
+      if (confirm("Are you sure you want to delete this employee?")) {
+        employees.splice(index, 1);
+        saveEmployees();
+        renderTable();
+      }
+    }
+
+    // Initial render
+    renderTable();
+  </script>
+</body>
+</html>

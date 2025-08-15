@@ -1,0 +1,146 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Layout */
+body {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6f8;
+  color: #333;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #ffffff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+}
+
+.sidebar .profile {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar .profile img {
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.sidebar h3 {
+  margin-bottom: 5px;
+}
+
+.sidebar p {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Logout button */
+.sidebar button {
+  padding: 10px 15px;
+  background: #ff4d4d;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: 0.3s ease;
+}
+
+.sidebar button:hover {
+  background: #e60000;
+}
+
+/* Clock */
+#clock {
+  font-size: 0.9rem;
+  background: #f1f1f1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+/* Page title */
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #0073ff;
+}
+
+/* Buttons in main */
+.main-content button {
+  padding: 10px 15px;
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.main-content button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+
+/* Inputs */
+input {
+  background: white;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 5px 0;
+  width: 100%;
+  transition: 0.3s ease;
+}
+
+input:focus {
+  border-color: #00c6ff;
+  outline: none;
+  box-shadow: 0 0 8px #00c6ff33;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 20px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+  color: white;
+}
+
+tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+tr:hover {
+  background: #eef4ff;
+  transition: 0.3s ease;
+}
